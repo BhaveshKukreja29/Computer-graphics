@@ -8,10 +8,13 @@ typedef struct
 	int active;
 }Bullet, Enemy;
 
-Bullet bullets[10];
+#define maxb 10
+#define maxene 2
+
+Bullet bullets[maxb];
 int baccess = 0;
 
-Enemy enemy[5];
+Enemy enemy[maxene];
 
 int spaceshipX = 300;
 int spaceshipY = 400;
@@ -19,12 +22,12 @@ void drawspaceship(int x, int y) ;
 void handle();
 void game();
 void initbullet();
-void updateWorld();
+int updateWorld();
 void moveenemy();
 void movebullet();
 void drawenemy();
 void drawbullet();
-void detect();
+int detect();
 
 int main()
 {
@@ -39,25 +42,41 @@ int main()
 void initbullet()
 {
 	int i;
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < maxb; i++)
 	{
 		bullets[i].active = 0;
 	}
 
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < maxene; i++)
 	{
-		enemy[i].active = 0;
+		if (i == 0)
+		{
+			enemy[i].active = 1;
+			enemy[i].x = rand() % getmaxx();
+			enemy[i].y = 0;
+		}
+		else
+		{
+			enemy[i].active = 0;
+		}
+
 	}
 }
 
 void game()
 {
+	int gameOver;
 	while (1)
 	{
 		cleardevice();
 		handle();
-		updateWorld();
+		gameOver = updateWorld();
 		delay(15);
+
+		if (gameOver == 1)
+		{
+			break;
+		}
 	}
 }
 
@@ -82,7 +101,7 @@ void handle()
 					if (spaceshipX > getmaxx() - 10)
 					{
 						spaceshipX = getmaxx() - 10;
-					} 
+					}
 					break;
 				case 0x48: //top arrow button
 					bullets[baccess].x = spaceshipX;
@@ -95,26 +114,35 @@ void handle()
 	}
 }
 
-void updateWorld()
+int updateWorld()
 {
+	int flag;
 	movebullet();
 	moveenemy();
 	drawspaceship(spaceshipX, spaceshipY);
 	drawenemy();
 	drawbullet();
-	detect();
+	flag = detect();
+	if (flag == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 void movebullet()
 {
 	int i;
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < maxb; i++)
 	{
-        if (bullets[i].y < 0)
-        {
+		if (bullets[i].y < 0)
+		{
 			bullets[i].active = 0;
 			continue;
-        }
+		}
 		bullets[i].y -= 2;
 	}
 }
@@ -122,22 +150,19 @@ void movebullet()
 void moveenemy()
 {
 	int i;
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < maxene; i++)
 	{
-        if (enemy[i].y >= getmaxy())
-        {
-			enemy[i].active = 0;
-        }
-		else if (enemy[i].active == 1)
+		if (enemy[i].active == 1)
 		{
 			enemy[i].y += 2;
 		}
-		
+
 	}
 
-	for (i = 0; i < 4; i++)
+	//enemy generation code
+	for (i = 0; i < maxene - 1; i++)
 	{
-		if (enemy[i + 1].active == 0 && enemy[i].y != 0)
+		if (enemy[i + 1].active == 0 && enemy[i].y > 130)
 		{
 			i++;
 			enemy[i].active = 1;
@@ -147,15 +172,16 @@ void moveenemy()
 	}
 }
 
-void detect()
+int detect()
 {
 	int i, j;
-	// if bullet, hits remove enemy and bullet
-	for (i = 0; i < 10; i++)
+
+	//Check if any of the bullet hits any of the enemies
+	for (i = 0; i < maxb; i++)
 	{
 		if (bullets[i].active == 1)
 		{
-			for (j = 0; j < 5; j++)
+			for (j = 0; j < maxene; j++)
 			{
 				if (bullets[i].x <= (enemy[j].x + 30) && bullets[i].x >= (enemy[j].x) && bullets[i].y <= (enemy[j].y + 30))
 				{
@@ -165,8 +191,17 @@ void detect()
 			}
 		}
 	}
-	// if enemy reaches end game, end 
-	//TODO
+
+	//check if the enemy has reached the area behind the spaceship
+	for (j = 0; j < maxene; j++)
+	{
+		if (enemy[j].active == 1 && enemy[j].y > getmaxy())
+		{
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 void drawspaceship(int x, int y)
@@ -194,7 +229,7 @@ void drawspaceship(int x, int y)
 		line(x - 5/2, y - 55/2, x - 2/2, y - 55/2);
 		line(x - 2/2, y - 55/2, x - 2/2, y - 70/2);
 		line(x - 2/2, y - 70/2, x, y - 70/2);
-		
+
 		line(x, y - 5/2, x + 5/2, y - 5/2);
 		line(x + 5/2, y - 5/2, x + 5/2, y - 20/2);
 		line(x + 5/2, y - 20/2, x + 10/2, y - 20/2);
@@ -224,7 +259,7 @@ void drawenemy()
 {
 	int i;
 
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < maxene; i++)
 	{
 		if (enemy[i].active == 1)
 		{
@@ -237,7 +272,7 @@ void drawenemy()
 void drawbullet()
 {
 	int i;
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < maxb; i++)
 	{
 		if (bullets[i].active == 1)
 		{
