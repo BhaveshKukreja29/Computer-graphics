@@ -12,7 +12,6 @@ Bullet bullets[10];
 int baccess = 0;
 
 Enemy enemy[5];
-int eaccess = 0;
 
 int spaceshipX = 300;
 int spaceshipY = 400;
@@ -25,6 +24,7 @@ void moveenemy();
 void movebullet();
 void drawenemy();
 void drawbullet();
+void detect();
 
 int main()
 {
@@ -102,6 +102,7 @@ void updateWorld()
 	drawspaceship(spaceshipX, spaceshipY);
 	drawenemy();
 	drawbullet();
+	detect();
 }
 
 void movebullet()
@@ -114,7 +115,7 @@ void movebullet()
 			bullets[i].active = 0;
 			continue;
         }
-		bullets[i].y -= 10;
+		bullets[i].y -= 2;
 	}
 }
 
@@ -126,22 +127,46 @@ void moveenemy()
         if (enemy[i].y >= getmaxy())
         {
 			enemy[i].active = 0;
-			eaccess = (eaccess + 1) % 5;
-			continue;
         }
-		enemy[i].y += 2;
+		else if (enemy[i].active == 1)
+		{
+			enemy[i].y += 2;
+		}
+		
 	}
 
 	for (i = 0; i < 4; i++)
 	{
-		if (enemy[eaccess + 1].active == 0 && enemy[eaccess].y != 0)
+		if (enemy[i + 1].active == 0 && enemy[i].y != 0)
 		{
-			eaccess++;
-			enemy[eaccess].active = 1;
-			enemy[eaccess].y = 0;
-			enemy[eaccess].x = rand() % getmaxx();
+			i++;
+			enemy[i].active = 1;
+			enemy[i].y = 0;
+			enemy[i].x = rand() % getmaxx();
 		}
 	}
+}
+
+void detect()
+{
+	int i, j;
+	// if bullet, hits remove enemy and bullet
+	for (i = 0; i < 10; i++)
+	{
+		if (bullets[i].active == 1)
+		{
+			for (j = 0; j < 5; j++)
+			{
+				if (bullets[i].x <= (enemy[j].x + 30) && bullets[i].x >= (enemy[j].x) && bullets[i].y <= (enemy[j].y + 30))
+				{
+					enemy[j].active = 0;
+					bullets[i].active = 0;
+				}
+			}
+		}
+	}
+	// if enemy reaches end game, end 
+	//TODO
 }
 
 void drawspaceship(int x, int y)
