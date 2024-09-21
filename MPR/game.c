@@ -8,7 +8,7 @@ typedef struct
 	int active;
 }Bullet, Enemy;
 
-#define maxb 10
+#define maxb 20
 #define maxene 2
 
 Bullet bullets[maxb];
@@ -18,6 +18,9 @@ Enemy enemy[maxene];
 
 int spaceshipX = 300;
 int spaceshipY = 400;
+int score = 0;
+
+
 void drawspaceship(int x, int y) ;
 void handle();
 void game();
@@ -25,6 +28,7 @@ void initbullet();
 int updateWorld();
 void moveenemy();
 void movebullet();
+void updateScore();
 void drawenemy();
 void drawbullet();
 int detect();
@@ -49,17 +53,7 @@ void initbullet()
 
 	for (i = 0; i < maxene; i++)
 	{
-		if (i == 0)
-		{
-			enemy[i].active = 1;
-			enemy[i].x = rand() % getmaxx();
-			enemy[i].y = 0;
-		}
-		else
-		{
-			enemy[i].active = 0;
-		}
-
+		enemy[i].active = 0;
 	}
 }
 
@@ -107,7 +101,7 @@ void handle()
 					bullets[baccess].x = spaceshipX;
 					bullets[baccess].y = spaceshipY - 20;
 					bullets[baccess++].active = 1;
-					baccess = (baccess + 1) % 10;
+					baccess = (baccess + 1) % 20;
 					break;
 			}
 		}
@@ -120,6 +114,7 @@ int updateWorld()
 	movebullet();
 	moveenemy();
 	drawspaceship(spaceshipX, spaceshipY);
+	updateScore();
 	drawenemy();
 	drawbullet();
 	flag = detect();
@@ -149,7 +144,7 @@ void movebullet()
 
 void moveenemy()
 {
-	int i;
+	int i, j;
 	for (i = 0; i < maxene; i++)
 	{
 		if (enemy[i].active == 1)
@@ -162,12 +157,12 @@ void moveenemy()
 	//enemy generation code
 	for (i = 0; i < maxene - 1; i++)
 	{
-		if (enemy[i + 1].active == 0 && enemy[i].y > 130)
+		if (enemy[i].active == 0 )
 		{
-			i++;
 			enemy[i].active = 1;
 			enemy[i].y = 0;
-			enemy[i].x = rand() % getmaxx();
+			enemy[i].x = 30 + (rand() % (getmaxx() - 60));
+			break;
 		}
 	}
 }
@@ -183,10 +178,11 @@ int detect()
 		{
 			for (j = 0; j < maxene; j++)
 			{
-				if (bullets[i].x <= (enemy[j].x + 30) && bullets[i].x >= (enemy[j].x) && bullets[i].y <= (enemy[j].y + 30))
+				if (bullets[i].x <= (enemy[j].x + 30) && bullets[i].x >= (enemy[j].x) && bullets[i].y <= (enemy[j].y + 40))
 				{
 					enemy[j].active = 0;
 					bullets[i].active = 0;
+					score++;
 				}
 			}
 		}
@@ -206,53 +202,62 @@ int detect()
 
 void drawspaceship(int x, int y)
 {
-		line(x, y - 5/2, x - 5/2, y - 5/2);
-		line(x - 5/2, y - 5/2, x - 5/2, y - 20/2);
-		line(x - 5/2, y - 20/2, x - 10/2, y - 20/2);
-		line(x - 10/2, y - 20/2, x - 10/2, y - 15/2);
-		line(x - 10/2, y - 15/2, x - 15/2, y - 15/2);
-		line(x - 15/2, y - 15/2, x - 15/2, y - 10/2);
-		line(x - 15/2, y - 10/2, x - 20/2, y - 10/2);
-		line(x - 20/2, y - 10/2, x - 20/2, y - 5/2);
-		line(x - 20/2, y - 5/2, x - 25/2, y - 5/2);
-		line(x - 25/2, y - 5/2, x - 25/2, y);
-		line(x - 25/2, y, x - 30/2, y);
-		line(x - 30/2, y, x - 30/2, y - 30/2);
-		line(x - 30/2, y - 30/2, x - 25/2, y - 30/2);
-		line(x - 25/2, y - 30/2, x - 25/2, y - 10/2);
-		line(x - 25/2, y - 10/2, x - 20/2, y - 10/2);
-		line(x - 20/2, y - 10/2, x - 20/2, y - 20/2);
-		line(x - 20/2, y - 20/2, x - 15/2, y - 20/2);
-		line(x - 15/2, y - 20/2, x - 15/2, y - 30/2);
-		line(x - 15/2, y - 30/2, x - 5/2, y - 30/2);
-		line(x - 5/2, y - 30/2, x - 5/2, y - 55/2);
-		line(x - 5/2, y - 55/2, x - 2/2, y - 55/2);
-		line(x - 2/2, y - 55/2, x - 2/2, y - 70/2);
-		line(x - 2/2, y - 70/2, x, y - 70/2);
+	line(x, y - 2, x - 2, y - 2);
+	line(x - 2, y - 2, x - 2, y - 10);
+	line(x - 2, y - 10, x - 5, y - 10);
+	line(x - 5, y - 10, x - 5, y - 7);
+	line(x - 5, y - 7, x - 7, y - 7);
+	line(x - 7, y - 7, x - 7, y - 5);
+	line(x - 7, y - 5, x - 10, y - 5);
+	line(x - 10, y - 5, x - 10, y - 2);
+	line(x - 10, y - 2, x - 12, y - 2);
+	line(x - 12, y - 2, x - 12, y);
+	line(x - 12, y, x - 15, y);
+	line(x - 15, y, x - 15, y - 15);
+	line(x - 15, y - 15, x - 12, y - 15);
+	line(x - 12, y - 15, x - 12, y - 5);
+	line(x - 12, y - 5, x - 10, y - 5);
+	line(x - 10, y - 5, x - 10, y - 10);
+	line(x - 10, y - 10, x - 7, y - 10);
+	line(x - 7, y - 10, x - 7, y - 15);
+	line(x - 7, y - 15, x - 2, y - 15);
+	line(x - 2, y - 15, x - 2, y - 27);
+	line(x - 2, y - 27, x - 1, y - 27);
+	line(x - 1, y - 27, x - 1, y - 35);
+	line(x - 1, y - 35, x, y - 35);
 
-		line(x, y - 5/2, x + 5/2, y - 5/2);
-		line(x + 5/2, y - 5/2, x + 5/2, y - 20/2);
-		line(x + 5/2, y - 20/2, x + 10/2, y - 20/2);
-		line(x + 10/2, y - 20/2, x + 10/2, y - 15/2);
-		line(x + 10/2, y - 15/2, x + 15/2, y - 15/2);
-		line(x + 15/2, y - 15/2, x + 15/2, y - 10/2);
-		line(x + 15/2, y - 10/2, x + 20/2, y - 10/2);
-		line(x + 20/2, y - 10/2, x + 20/2, y - 5/2);
-		line(x + 20/2, y - 5/2, x + 25/2, y - 5/2);
-		line(x + 25/2, y - 5/2, x + 25/2, y);
-		line(x + 25/2, y, x + 30/2, y);
-		line(x + 30/2, y, x + 30/2, y - 30/2);
-		line(x + 30/2, y - 30/2, x + 25/2, y - 30/2);
-		line(x + 25/2, y - 30/2, x + 25/2, y - 10/2);
-		line(x + 25/2, y - 10/2, x + 20/2, y - 10/2);
-		line(x + 20/2, y - 10/2, x + 20/2, y - 20/2);
-		line(x + 20/2, y - 20/2, x + 15/2, y - 20/2);
-		line(x + 15/2, y - 20/2, x + 15/2, y - 30/2);
-		line(x + 15/2, y - 30/2, x + 5/2, y - 30/2);
-		line(x + 5/2, y - 30/2, x + 5/2, y - 55/2);
-		line(x + 5/2, y - 55/2, x + 2/2, y - 55/2);
-		line(x + 2/2, y - 55/2, x + 2/2, y - 70/2);
-		line(x + 2/2, y - 70/2, x, y - 70/2);
+	line(x, y - 2, x + 2, y - 2);
+	line(x + 2, y - 2, x + 2, y - 10);
+	line(x + 2, y - 10, x + 5, y - 10);
+	line(x + 5, y - 10, x + 5, y - 7);
+	line(x + 5, y - 7, x + 7, y - 7);
+	line(x + 7, y - 7, x + 7, y - 5);
+	line(x + 7, y - 5, x + 10, y - 5);
+	line(x + 10, y - 5, x + 10, y - 2);
+	line(x + 10, y - 2, x + 12, y - 2);
+	line(x + 12, y - 2, x + 12, y);
+	line(x + 12, y, x + 15, y);
+	line(x + 15, y, x + 15, y - 15);
+	line(x + 15, y - 15, x + 12, y - 15);
+	line(x + 12, y - 15, x + 12, y - 5);
+	line(x + 12, y - 5, x + 10, y - 5);
+	line(x + 10, y - 5, x + 10, y - 10);
+	line(x + 10, y - 10, x + 7, y - 10);
+	line(x + 7, y - 10, x + 7, y - 15);
+	line(x + 7, y - 15, x + 2, y - 15);
+	line(x + 2, y - 15, x + 2, y - 27);
+	line(x + 2, y - 27, x + 1, y - 27);
+	line(x + 1, y - 27, x + 1, y - 35);
+	line(x + 1, y - 35, x, y - 35);
+}
+
+void updateScore()
+{
+	char text[20] = "Score: ";
+	sprintf(text + 6, "%d", score);
+	settextstyle(DEFAULT_FONT,HORIZ_DIR, 2);
+	setcolor(WHITE);
+	outtextxy((getmaxx() - 120), 10, text);
 }
 
 void drawenemy()
