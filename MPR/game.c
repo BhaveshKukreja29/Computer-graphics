@@ -32,6 +32,8 @@ void updateScore();
 void drawenemy();
 void drawbullet();
 int detect();
+void celebrate();
+void death();
 
 int main()
 {
@@ -65,7 +67,7 @@ void game()
 		cleardevice();
 		handle();
 		gameOver = updateWorld();
-		delay(15);
+		delay(30);
 
 		if (gameOver == 1)
 		{
@@ -87,11 +89,11 @@ void handle()
 			switch (ch)
 			{
 				case 0x4B:  //Left arrow
-					spaceshipX -= 10;
+					spaceshipX -= 20;
 					if (spaceshipX < 10) spaceshipX = 10;
 					break;
 				case 0x4D: //Right arrow
-					spaceshipX += 10;
+					spaceshipX += 20;
 					if (spaceshipX > getmaxx() - 10)
 					{
 						spaceshipX = getmaxx() - 10;
@@ -193,11 +195,39 @@ int detect()
 	{
 		if (enemy[j].active == 1 && enemy[j].y > getmaxy())
 		{
+			death();
+			delay(5000);
 			return 1;
 		}
 	}
 
+	//check score
+	if (score >= 2)
+	{
+		celebrate();
+		delay(5000);
+		return 1;
+	}
+
 	return 0;
+}
+
+void celebrate()
+{
+	char *text = "VICTORYYY!!!!!";
+	cleardevice();
+	settextstyle(DEFAULT_FONT,HORIZ_DIR, 5);
+	setcolor(YELLOW);
+	outtextxy(10, 200, text);
+}
+
+void death()
+{
+	char *text = "You Died :(";
+	cleardevice();
+	settextstyle(DEFAULT_FONT,HORIZ_DIR, 5);
+	setcolor(RED);
+	outtextxy(10, 200, text);
 }
 
 void drawspaceship(int x, int y)
