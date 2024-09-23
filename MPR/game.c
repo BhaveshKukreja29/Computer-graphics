@@ -1,4 +1,5 @@
 #include <graphics.h>
+#include <stdio.h>
 #include <conio.h>
 #include <dos.h>
 
@@ -39,11 +40,25 @@ void death();
 
 int main()
 {
-	int gd = DETECT, gm;
+	int gd = DETECT, gm,c;
 	initgraph(&gd, &gm, "C:\\TURBOC3\\BGI");
 	initbullet();
-	game();
-	closegraph();
+	while (1) {
+	
+	printf("MENU:-\n1.Play\2.Exit\n\n.Last score: %d",score);
+	scanf("%d",&c);
+	switch (c) {
+		case 1:{
+			game();
+			closegraph();	
+		}
+		break;
+
+		default: 
+		break;
+	}
+	}
+
 	return 0;
 }
 
