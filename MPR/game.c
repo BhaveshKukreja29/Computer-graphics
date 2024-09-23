@@ -40,27 +40,37 @@ void death();
 
 int main()
 {
-	int gd = DETECT, gm,c;
+	int gd = DETECT, gm, c;
 	initgraph(&gd, &gm, "C:\\TURBOC3\\BGI");
+
 	initbullet();
+
 	while (1) {
-	
-	printf("MENU:-\n1.Play\2.Exit\n\n.Last score: %d",score);
-	scanf("%d",&c);
-	switch (c) {
-		case 1:{
-			game();
-			closegraph();	
+		
+		cleardevice();
+		printf("MENU:-\n1. Play\n2. Exit\nLast score: %d\n\nYour selection:", score);
+		scanf("%d", &c);
+
+		switch (c) {
+			case 1: {
+				game(); 
+				
+				break;
+			}
+			case 2: {
+				closegraph(); 
+			}
+			default: {
+				printf("Invalid choice. Please choose again.\n");
+				break;
+			}
 		}
-		break;
-
-		default: 
-		break;
-	}
 	}
 
+	closegraph();
 	return 0;
 }
+
 
 void initbullet()
 {
