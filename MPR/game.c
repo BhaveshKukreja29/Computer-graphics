@@ -27,10 +27,12 @@ void game();
 void initbullet();
 int updateWorld();
 void moveenemy();
+void enemy_ghost(int x,int y);
 void movebullet();
 void updateScore();
 void drawenemy();
 void drawbullet();
+void bullet_circle(int x, int y);
 int detect();
 void celebrate();
 void death();
@@ -140,7 +142,7 @@ void movebullet()
 			bullets[i].active = 0;
 			continue;
 		}
-		bullets[i].y -= 2;
+		bullets[i].y -= 4;
 	}
 }
 
@@ -214,7 +216,7 @@ int detect()
 
 void celebrate()
 {
-	char *text = "VICTORYYY!!!!!";
+	char *text = " VICTORYYY!!!!!";
 	cleardevice();
 	settextstyle(DEFAULT_FONT,HORIZ_DIR, 5);
 	setcolor(YELLOW);
@@ -231,7 +233,7 @@ void death()
 }
 
 void drawspaceship(int x, int y)
-{
+{       setcolor(WHITE);
 	line(x, y - 2, x - 2, y - 2);
 	line(x - 2, y - 2, x - 2, y - 10);
 	line(x - 2, y - 10, x - 5, y - 10);
@@ -279,6 +281,8 @@ void drawspaceship(int x, int y)
 	line(x + 2, y - 27, x + 1, y - 27);
 	line(x + 1, y - 27, x + 1, y - 35);
 	line(x + 1, y - 35, x, y - 35);
+	setfillstyle(SOLID_FILL,RED);
+	floodfill(x+1, y-15,WHITE);
 }
 
 void updateScore()
@@ -299,9 +303,29 @@ void drawenemy()
 		if (enemy[i].active == 1)
 		{
 			setcolor(WHITE);
-			rectangle(enemy[i].x, enemy[i].y, enemy[i].x + 30, enemy[i].y + 30);
+			enemy_ghost(enemy[i].x, enemy[i].y);
 		}
 	}
+}
+
+void enemy_ghost(int x,int y){
+
+    setcolor(WHITE);
+
+
+    rectangle(x, y, x + 30, y + 30);
+
+
+    rectangle(x + 8, y + 8, x + 13, y + 13);
+    rectangle(x + 20, y + 8, x + 25, y + 15);
+
+
+    rectangle(x + 4, y + 26, x + 8, y + 30);
+    rectangle(x + 12, y + 26, x + 16, y + 30);
+    rectangle(x + 20, y + 26, x + 24, y + 30);
+    setfillstyle(SOLID_FILL,BLUE);
+    floodfill(x+6,y+20,WHITE);
+
 }
 
 void drawbullet()
@@ -312,7 +336,14 @@ void drawbullet()
 		if (bullets[i].active == 1)
 		{
 			setcolor(WHITE);
-			line(bullets[i].x, bullets[i].y, bullets[i].x, bullets[i].y - 10);
+			bullet_circle(bullets[i].x, bullets[i].y);
 		}
 	}
+}
+
+void bullet_circle(int x, int y) {
+    setcolor(RED);            
+    circle(x, y, 3);        
+    setfillstyle(SOLID_FILL, YELLOW);  
+    floodfill(x, y, RED);     
 }
