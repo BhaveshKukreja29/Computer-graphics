@@ -12,7 +12,9 @@ int a[100][100];
   int gd=DETECT,gm;
   
   initgraph(&gd,&gm,"c:\\tc\\bgi");
-  
+
+
+  //letter X
   for (k = 0; k < 100; k++)
   {
       for (l = 0; l < 100; l++)
